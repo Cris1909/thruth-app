@@ -5,11 +5,11 @@ import { Colors } from "@/constants/Colors";
 import { globalStyles } from "@/global-styles";
 import { useTruthTableStore } from "@/store/truth-table-store";
 import { Ionicons } from "@expo/vector-icons";
+import { Link } from "expo-router";
 import React, { useState } from "react";
 import {
   Alert,
   FlatList,
-  StyleSheet,
   TextInput,
   TouchableOpacity,
   View,
@@ -36,55 +36,14 @@ export default function StepOneScreen() {
   };
 
   return (
-    <ThemedView style={{ flex: 1, padding: 24 }}>
+    <ThemedView style={{ flex: 1, padding: 16, paddingTop: 24 }}>
       <ThemedText type="title">Paso 1:</ThemedText>
       <ThemedText type="subtitle">Introduce tus proposiciones</ThemedText>
-
-      <View
-        style={{
-          marginTop: 16,
-          marginBottom: 48,
-          flexDirection: "row",
-          gap: 8,
-        }}
-      >
-        {/* Input para añadir nueva proposición */}
-        <TextInput
-          value={proposition}
-          onChangeText={setProposition}
-          placeholder="Introduce una proposición..."
-          maxLength={1}
-          style={globalStyles.input}
-          placeholderTextColor={Colors.dark.icon}
-        />
-
-        {/* Botón para añadir la proposición */}
-        <TouchableOpacity
-          onPress={addProposition}
-          style={[
-            globalStyles.squareButton,
-            {
-              backgroundColor: Colors.success,
-              height: 48,
-              width: 48,
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: 8,
-            },
-          ]}
-        >
-          <Ionicons name="add" size={32} color="white" />
-        </TouchableOpacity>
-      </View>
-
-      {propositions.length ? (
-        <ThemedText type="default">Proposiciones creadas:</ThemedText>
-      ) : null}
 
       {/* Lista de proposiciones */}
       <FlatList
         data={propositions}
-        style={{ marginTop: 8 }}
+        style={{ marginTop: 16 }}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => (
           <View
@@ -102,26 +61,65 @@ export default function StepOneScreen() {
               style={globalStyles.input}
             />
             {/* Botón para eliminar */}
-            <TouchableOpacity
-              onPress={() => removeProposition(item)}
-              style={[
-                globalStyles.squareButton,
-                {
-                  backgroundColor: Colors.error,
-                },
-              ]}
-            >
-              <Ionicons name="trash" size={32} color="white" />
+            <TouchableOpacity onPress={() => removeProposition(item)}>
+              <Ionicons name="trash" size={20} color={Colors.error} />
             </TouchableOpacity>
           </View>
         )}
       />
 
       {/* Link para navegar al siguiente paso */}
-      <View style={{ paddingTop: 24 }}>
-        <GlobalLink disabled={!propositions.length} href={"/step-2"}>
-          {propositions.length ? "Continuar" : "Añade al menos una proposición"}
-        </GlobalLink>
+      <View style={{}}>
+        <View
+          style={{
+            marginTop: 16,
+            flexDirection: "row",
+            gap: 8,
+          }}
+        >
+          <TextInput
+            value={proposition}
+            onChangeText={setProposition}
+            placeholder="Introduce una proposición..."
+            maxLength={1}
+            style={globalStyles.input}
+            placeholderTextColor={Colors.dark.icon}
+          />
+
+          {proposition.length ? (
+            <TouchableOpacity
+              activeOpacity={0.5}
+              onPress={addProposition}
+              style={[
+                globalStyles.squareButton,
+                {
+                  backgroundColor: Colors.success,
+                },
+              ]}
+            >
+              <Ionicons name="add" size={30} color="white" />
+            </TouchableOpacity>
+          ) : (
+            <Link
+              href={"/step-2"}
+              style={[
+                globalStyles.squareButton,
+                {
+                  backgroundColor: Colors.primary,
+                  opacity: !propositions.length ? 0.25 : 1,
+                },
+              ]}
+              asChild
+            >
+              <TouchableOpacity
+                activeOpacity={0.5}
+                disabled={!propositions.length}
+              >
+                <Ionicons name="chevron-forward" size={30} color="white" />
+              </TouchableOpacity>
+            </Link>
+          )}
+        </View>
       </View>
     </ThemedView>
   );

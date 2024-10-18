@@ -3,20 +3,20 @@ import { Colors } from "./constants/Colors";
 
 export const globalStyles = StyleSheet.create({
   input: {
-    borderWidth: 1,
     paddingHorizontal: 16,
-    height: 48,
-    borderRadius: 8,
-    borderColor: Colors.dark.icon,
+    height: 40,
+    borderRadius: 50,
     color: Colors.dark.text,
     flex: 1,
     fontWeight: "bold",
+    backgroundColor: Colors.table.header,
   },
   squareButton: {
-    height: 48,
-    width: 48,
+    height: 40,
+    width: 40,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 8,
+    borderRadius: 20,
+    backgroundColor: Colors.table.header,
   },
 });
