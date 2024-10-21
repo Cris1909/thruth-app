@@ -1,11 +1,3 @@
-import GlobalLink from "@/components/GlobalLink";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { Colors } from "@/constants/Colors";
-import { globalStyles } from "@/global-styles";
-import { useTruthTableStore } from "@/store/truth-table-store";
-import { Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
 import React, { useState } from "react";
 import {
   Alert,
@@ -14,6 +6,15 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+import { DataItem } from "@/components/DataItem";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { Colors } from "@/constants/Colors";
+import { globalStyles } from "@/global-styles";
+import { useTruthTableStore } from "@/store/truth-table-store";
+import { Ionicons } from "@expo/vector-icons";
+import { Link } from "expo-router";
 
 export default function StepOneScreen() {
   const [proposition, setProposition] = useState(""); // Estado para la nueva proposición
@@ -29,6 +30,7 @@ export default function StepOneScreen() {
     }
     if (propositions.includes(proposition)) {
       Alert.alert("Error", "La proposición ya existe.");
+      setProposition("");
       return;
     }
     newProposition(proposition);
@@ -46,28 +48,7 @@ export default function StepOneScreen() {
         style={{ marginTop: 16 }}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => (
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: 8,
-              marginBottom: 12,
-            }}
-          >
-            <TextInput
-              value={item}
-              editable={false}
-              style={globalStyles.input}
-            />
-            {/* Botón para eliminar */}
-            <TouchableOpacity
-              onPress={() => removeProposition(item)}
-              style={{ height: "100%", justifyContent: "center" }}
-            >
-              <Ionicons name="trash" size={20} color={Colors.error} />
-            </TouchableOpacity>
-          </View>
+          <DataItem item={item} onDelete={() => removeProposition(item)} />
         )}
       />
 

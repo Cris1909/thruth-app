@@ -1,8 +1,10 @@
+import { DataItem } from "@/components/DataItem";
 import GlobalLink from "@/components/GlobalLink";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { globalStyles } from "@/global-styles";
+import { evaluateExpression } from "@/helpers/truth-table.helpers";
 import { useTruthTableStore } from "@/store/truth-table-store";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import BottomSheet, {
@@ -106,9 +108,20 @@ export default function StepThreeScreen() {
       Alert.alert("Error", "La proposición ya existe.");
       return;
     }
-    newExpression(expression);
-    setExpression("");
-    setCurrentSelection({ start: 0, end: 0 });
+
+    try {
+      evaluateExpression(
+        expression,
+        propositions.reduce((acc, p) => ({ ...acc, [p]: true }), {}),
+        propositions
+      );
+
+      newExpression(expression.replaceAll(" ", "").split("").join(" "));
+      setExpression("");
+      setCurrentSelection({ start: 0, end: 0 });
+    } catch (error: any) {
+      Alert.alert("Error", `La expresión ( ${expression} ) no es valida.`);
+    }
   };
 
   const ExpressionInput = (
@@ -188,34 +201,13 @@ export default function StepThreeScreen() {
       <ThemedText type="title">Paso 3:</ThemedText>
       <ThemedText type="subtitle">Crea expresiones complejas</ThemedText>
 
-      {/* Lista de proposiciones */}
+      {/* Lista de expresiones */}
       <FlatList
         data={expressions}
         style={{ marginTop: 16 }}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => (
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: 8,
-              marginBottom: 12,
-            }}
-          >
-            <TextInput
-              value={item}
-              editable={false}
-              style={globalStyles.input}
-            />
-            {/* Botón para eliminar */}
-            <TouchableOpacity
-              onPress={() => removeExpression(item)}
-              style={{ height: "100%", justifyContent: "center" }}
-            >
-              <Ionicons name="trash" size={20} color={Colors.error} />
-            </TouchableOpacity>
-          </View>
+          <DataItem item={item} onDelete={() => removeExpression(item)} />
         )}
       />
 
