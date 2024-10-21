@@ -36,7 +36,7 @@ export default function StepOneScreen() {
   };
 
   return (
-    <ThemedView style={{ flex: 1, padding: 16, paddingTop: 24 }}>
+    <ThemedView style={{ flex: 1, padding: 16, paddingTop: 32 }}>
       <ThemedText type="title">Paso 1:</ThemedText>
       <ThemedText type="subtitle">Introduce tus proposiciones</ThemedText>
 
@@ -61,7 +61,10 @@ export default function StepOneScreen() {
               style={globalStyles.input}
             />
             {/* Botón para eliminar */}
-            <TouchableOpacity onPress={() => removeProposition(item)}>
+            <TouchableOpacity
+              onPress={() => removeProposition(item)}
+              style={{ height: "100%", justifyContent: "center" }}
+            >
               <Ionicons name="trash" size={20} color={Colors.error} />
             </TouchableOpacity>
           </View>

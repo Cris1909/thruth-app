@@ -39,6 +39,7 @@ export default function RootLayout() {
           <Stack.Screen name="step-1" options={{ title: "" }} />
           <Stack.Screen name="step-2" options={{ title: "" }} />
           <Stack.Screen name="step-3" options={{ title: "" }} />
+          <Stack.Screen name="result" options={{ title: "" }} />
           <Stack.Screen name="+not-found" />
         </Stack>
       </ThemeProvider>

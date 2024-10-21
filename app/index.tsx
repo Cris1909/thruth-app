@@ -14,7 +14,7 @@ export default function HomeScreen() {
   return (
     <ThemedView
       style={{
-        padding: 24,
+        padding: 16,
         flex: 1,
         paddingTop: 100,
       }}

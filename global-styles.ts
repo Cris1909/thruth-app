@@ -19,4 +19,12 @@ export const globalStyles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: Colors.table.header,
   },
+  key: {
+    height: 36,
+    width: 36,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 8,
+    backgroundColor: Colors.table.header,
+  },
 });

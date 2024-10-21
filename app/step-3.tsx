@@ -9,6 +9,7 @@ import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
+import { Link } from "expo-router";
 import React, { useCallback, useRef, useState } from "react";
 import {
   Alert,
@@ -38,13 +39,13 @@ const KeyButton = ({
     <TouchableOpacity
       activeOpacity={0.5}
       key={character}
-      style={[globalStyles.squareButton, style]}
+      style={[globalStyles.key, style]}
       onPress={() => onPressKey(character)}
     >
       {children ? (
         children
       ) : (
-        <Text style={{ color: "white", fontWeight: "bold", fontSize: 24 }}>
+        <Text style={{ color: "white", fontWeight: "bold", fontSize: 20 }}>
           {character}
         </Text>
       )}
@@ -60,14 +61,14 @@ export default function StepThreeScreen() {
   }); // Estado para la posición del cursor
   const inputRef = useRef<TextInput>(null); // Referencia para el TextInput
 
+  const [isOpen, setIsOpen] = useState(false);
+
   const { expressions, newExpression, removeExpression, propositions } =
     useTruthTableStore();
 
   const bottomSheetRef = useRef<BottomSheet>(null);
 
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index);
-  }, []);
+  const handleSheetChanges = useCallback((index: number) => {}, []);
 
   const handleButtonClick = (value?: string) => {
     const { start, end } = currentSelection;
@@ -106,9 +107,70 @@ export default function StepThreeScreen() {
       return;
     }
     newExpression(expression);
-    setExpression(""); // Limpiar el campo de texto
-    setCurrentSelection({ start: 0, end: 0 }); // Reiniciar la posición del cursor
+    setExpression("");
+    setCurrentSelection({ start: 0, end: 0 });
   };
+
+  const ExpressionInput = (
+    <View
+      style={{
+        marginTop: 16,
+        flexDirection: "row",
+        gap: 8,
+      }}
+    >
+      <TextInput
+        ref={inputRef}
+        value={expression}
+        onChangeText={setExpression}
+        placeholder="Introduce tus expresiones..."
+        style={globalStyles.input}
+        onPress={() => {
+          bottomSheetRef.current?.expand();
+          setIsOpen(true);
+        }}
+        placeholderTextColor={Colors.dark.icon}
+        showSoftInputOnFocus={false}
+        onSelectionChange={(event) => {
+          const { end, start } = event.nativeEvent.selection;
+          setCurrentSelection({ start, end });
+        }}
+      />
+      {expression.length ? (
+        <TouchableOpacity
+          onPress={addExpression}
+          style={[
+            globalStyles.squareButton,
+            {
+              backgroundColor: Colors.success,
+            },
+          ]}
+        >
+          <Ionicons name="add" size={32} color="white" />
+        </TouchableOpacity>
+      ) : (
+        <Link
+          href={"/result"}
+          style={[
+            globalStyles.squareButton,
+            {
+              backgroundColor: Colors.primary,
+              opacity: !propositions.length ? 0.25 : 1,
+            },
+          ]}
+          asChild
+        >
+          <TouchableOpacity
+            onPress={() => bottomSheetRef.current?.close()}
+            activeOpacity={0.5}
+            disabled={!propositions.length}
+          >
+            <Ionicons name="chevron-forward" size={30} color="white" />
+          </TouchableOpacity>
+        </Link>
+      )}
+    </View>
+  );
 
   const renderBackdrop = useCallback(
     (props: any) => (
@@ -122,68 +184,14 @@ export default function StepThreeScreen() {
   );
 
   return (
-    <ThemedView style={{ flex: 1, padding: 24 }}>
+    <ThemedView style={{ flex: 1, padding: 16, paddingTop: 32 }}>
       <ThemedText type="title">Paso 3:</ThemedText>
       <ThemedText type="subtitle">Crea expresiones complejas</ThemedText>
-
-      <View
-        style={{
-          marginTop: 16,
-          marginBottom: 48,
-          flexDirection: "row",
-          gap: 8,
-        }}
-      >
-        {/* Input para añadir nueva proposición */}
-        <TextInput
-          ref={inputRef}
-          value={expression}
-          onChangeText={setExpression}
-          placeholder="Introduce tus expresiones..."
-          style={globalStyles.input}
-          placeholderTextColor={Colors.dark.icon}
-          showSoftInputOnFocus={false}
-          onSelectionChange={(event) => {
-            const { end, start } = event.nativeEvent.selection;
-            setCurrentSelection({ start, end });
-          }}
-        />
-
-        {/* Botón para añadir la proposición */}
-        <TouchableOpacity
-          onPress={addExpression}
-          style={[
-            globalStyles.squareButton,
-            {
-              backgroundColor: Colors.success,
-              height: 48,
-              width: 48,
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: 8,
-            },
-          ]}
-        >
-          <Ionicons name="add" size={32} color="white" />
-        </TouchableOpacity>
-      </View>
-
-      <View
-        style={{
-          width: "100%",
-          height: 1,
-          backgroundColor: Colors.table.header,
-          marginVertical: 16,
-        }}
-      />
-      {expressions.length ? (
-        <ThemedText type="default">Expresiones creadas:</ThemedText>
-      ) : null}
 
       {/* Lista de proposiciones */}
       <FlatList
         data={expressions}
-        style={{ marginTop: 8 }}
+        style={{ marginTop: 16 }}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => (
           <View
@@ -203,35 +211,27 @@ export default function StepThreeScreen() {
             {/* Botón para eliminar */}
             <TouchableOpacity
               onPress={() => removeExpression(item)}
-              style={[
-                globalStyles.squareButton,
-                {
-                  backgroundColor: Colors.error,
-                },
-              ]}
+              style={{ height: "100%", justifyContent: "center" }}
             >
-              <Ionicons name="trash" size={32} color="white" />
+              <Ionicons name="trash" size={20} color={Colors.error} />
             </TouchableOpacity>
           </View>
         )}
       />
 
-      {/* Link para navegar al siguiente paso */}
-      <View style={{ paddingTop: 24 }}>
-        <GlobalLink disabled={!expressions.length} href={"/step-2"}>
-          {expressions.length ? "Continuar" : "Añade al menos una proposición"}
-        </GlobalLink>
-      </View>
-      {/* 
-      <Pressable
-          style={[
-            StyleSheet.absoluteFill,
-            { backgroundColor:  }
-          ]}
-          onPress={handleClose}
-        /> */}
+      {ExpressionInput}
+      {isOpen ? (
+        <Pressable
+          style={[StyleSheet.absoluteFill]}
+          onPress={() => {
+            setIsOpen(false);
+            bottomSheetRef.current?.close();
+          }}
+        />
+      ) : null}
 
       <BottomSheet
+        index={-1}
         backdropComponent={renderBackdrop}
         ref={bottomSheetRef}
         onChange={handleSheetChanges}
@@ -242,51 +242,67 @@ export default function StepThreeScreen() {
         <BottomSheetView
           style={{
             backgroundColor: Colors.dark.background,
-            paddingHorizontal: 24,
-            paddingBottom: 24,
-            paddingTop: 16,
-           
+            paddingHorizontal: 16,
+            paddingBottom: 16,
           }}
         >
-          <View style={{ gap: 8 }}>
-            {/* Proposiciones */}
-            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-              {propositions.map((character) => (
-                <KeyButton
-                  key={character}
-                  character={character}
-                  onPressKey={handleButtonClick}
-                />
-              ))}
-            </View>
+          {ExpressionInput}
+          <View
+            style={{
+              width: "100%",
+              height: 1,
+              backgroundColor: Colors.table.header,
+              marginVertical: 16,
+            }}
+          />
+          <View style={{ gap: 4 }}>
+            <View style={{ flexDirection: "row", gap: 4 }}>
+              <View style={{ gap: 4, flex: 1 }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    gap: 4,
+                  }}
+                >
+                  {propositions.map((character) => (
+                    <KeyButton
+                      key={character}
+                      character={character}
+                      onPressKey={handleButtonClick}
+                    />
+                  ))}
+                </View>
 
-            {/* Caracteres logicos */}
-            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-              {logicalCharacters.map((character) => (
+                <View
+                  style={{ flexDirection: "row", flexWrap: "wrap", gap: 4 }}
+                >
+                  {logicalCharacters.map((character) => (
+                    <KeyButton
+                      key={character}
+                      character={character}
+                      onPressKey={handleButtonClick}
+                    />
+                  ))}
+                </View>
+              </View>
+              <View style={{}}>
                 <KeyButton
-                  key={character}
-                  character={character}
-                  onPressKey={handleButtonClick}
-                />
-              ))}
+                  character={" "}
+                  onPressKey={handleBackspace}
+                  style={{ backgroundColor: Colors.error, width: 36 + 36 + 4 }}
+                >
+                  <MaterialIcons name="backspace" color={"white"} size={30} />
+                </KeyButton>
+              </View>
             </View>
-
-            {/* Espacio y borrar */}
-            <View style={{ flexDirection: "row", gap: 8 }}>
+            <View style={{ flexDirection: "row", gap: 8, marginTop: 16 }}>
               <KeyButton
                 character={" "}
                 onPressKey={handleButtonClick}
                 style={{ flex: 1, backgroundColor: Colors.primary }}
               >
-                <MaterialIcons name="space-bar" color={"white"} size={32} />
-              </KeyButton>
-
-              <KeyButton
-                character={" "}
-                onPressKey={handleBackspace}
-                style={{ backgroundColor: Colors.error, width: 100 }}
-              >
-                <MaterialIcons name="backspace" color={"white"} size={32} />
+                <MaterialIcons name="space-bar" color={"white"} size={30} />
               </KeyButton>
             </View>
           </View>

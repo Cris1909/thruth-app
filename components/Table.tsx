@@ -6,18 +6,13 @@ import { ThemedText } from "./ThemedText";
 
 interface Props {
   propositions: string[];
-  complexPropositions?: string[];
+  expressions?: string[];
 }
-// const propositions = ["p", "q", "r", "s"];
-// const complexPropositions = ["p ∧ q ∨ (¬p ∧ q)"];
 
-export const Table: React.FC<Props> = ({
-  propositions,
-  complexPropositions = [],
-}) => {
-  const tableHeaders = propositions.concat(complexPropositions);
+export const Table: React.FC<Props> = ({ propositions, expressions = [] }) => {
+  const tableHeaders = propositions.concat(expressions);
 
-  const truthTable = generateTruthTable(propositions, complexPropositions);
+  const truthTable = generateTruthTable(propositions, expressions);
 
   return (
     <ScrollView horizontal>
@@ -28,7 +23,6 @@ export const Table: React.FC<Props> = ({
               style={[
                 styles.cell,
                 {
-                  paddingHorizontal: 16,
                   backgroundColor: Colors.table.header,
                 },
               ]}
@@ -44,7 +38,6 @@ export const Table: React.FC<Props> = ({
                     backgroundColor: e[header]
                       ? Colors.table.true
                       : Colors.table.false,
-                    // backgroundColor: Colors.table.background,
                   },
                 ]}
               >
@@ -61,10 +54,13 @@ export const Table: React.FC<Props> = ({
 const styles = StyleSheet.create({
   cell: {
     textAlign: "center",
+    textAlignVertical: "center",
     fontWeight: "bold",
     borderRadius: 4,
-    paddingVertical: 4,
     borderWidth: 1,
     borderColor: Colors.dark.background,
+    height: 32,
+    minWidth: 32,
+    paddingHorizontal: 8
   },
 });

@@ -11,13 +11,13 @@ export default function StepTwoScreen() {
   const { propositions } = useTruthTableStore();
 
   return (
-    <ThemedView style={{ flex: 1, padding: 24 }}>
+    <ThemedView style={{ flex: 1, padding: 16, paddingTop: 32 }}>
       <ThemedText type="title">Paso 2:</ThemedText>
       <ThemedText type="subtitle">Previzualización de la tabla</ThemedText>
 
       <ScrollView
         style={{
-          marginTop: 32,
+          marginTop: 16,
         }}
       >
         <Table propositions={propositions} />
