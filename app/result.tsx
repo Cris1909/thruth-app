@@ -28,11 +28,11 @@ export default function StepTwoScreen() {
         <Table propositions={propositions} expressions={expressions} />
       </ScrollView>
 
-      <LottieView
+      {/* <LottieView
         ref={ref}
         style={{ position: "absolute", top: 0, bottom: 0, right: 0, left: 0 }}
         source={require("../assets/confetti.json")}
-      />
+      /> */}
     </ThemedView>
   );
 }
